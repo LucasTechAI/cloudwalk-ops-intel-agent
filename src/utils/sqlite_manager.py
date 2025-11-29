@@ -4,7 +4,7 @@ from sqlite3 import Connection, connect, Error
 from dotenv import load_dotenv
 from pathlib import Path
 from os import getenv
-
+import threading
 
 load_dotenv()
 
@@ -33,73 +33,82 @@ EXPECTED_COLUMNS = [
 
 
 class SqliteManager:
+    """Thread-safe SQLite Manager for Streamlit applications"""
+    
     def __init__(self, db_path: str = None) -> None:
         """
-        Constructs a SqliteManager object.
+        Constructs a SqliteManager object with thread-local storage.
         Args:
-            db_path (str, optional): Path to the SQLite database file. Defaults to None, which uses the DB_PATH from environment variables.
+            db_path (str, optional): Path to the SQLite database file.
         """
         self.db_path: str = db_path or DB_PATH
-        self.conn: Connection = None
+        self._local = threading.local()  # Thread-local storage
+        self._lock = threading.Lock()
+
+    @property
+    def conn(self) -> Connection:
+        """
+        Returns a thread-local database connection.
+        Creates a new connection if one doesn't exist for the current thread.
+        """
+        if not hasattr(self._local, 'connection') or self._local.connection is None:
+            self._local.connection = self._create_connection()
+        return self._local.connection
+
+    def _create_connection(self) -> Connection:
+        """
+        Creates a new database connection with optimizations.
+        Returns:
+            Connection: SQLite database connection object.
+        """
+        try:
+            conn = connect(self.db_path, check_same_thread=False)
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA synchronous=NORMAL")
+            conn.execute("PRAGMA foreign_keys=ON")
+            logger.info(f"New connection created for thread {threading.current_thread().name}")
+            return conn
+        except Error as e:
+            logger.error(f"Error creating connection: {e}")
+            raise
 
     def __enter__(self) -> "SqliteManager":
-        """
-        Context manager entry method.
-        Returns:
-            SqliteManager: The SqliteManager instance with an active database connection.
-        """
-        self.conn = self.connect()
+        """Context manager entry method."""
         return self
 
     def __exit__(self, exc_type: type, exc_value: Exception, traceback: any) -> None:
-        """
-        Context manager exit method. Closes the database connection.
-        Args:
-            exc_type (type): Exception type, if any.
-            exc_value (Exception): Exception value, if any.
-            traceback (any): Traceback object, if any.
-        """
+        """Context manager exit method."""
         self.close()
         return None
 
     def connect(self) -> Connection:
         """
-        Establishes a connection to the SQLite database.
+        Establishes or returns the thread-local connection.
         Returns:
             Connection: SQLite database connection object.
         """
-        try:
-            self.conn: Connection = connect(self.db_path)
-            self.conn.execute("PRAGMA journal_mode=WAL")
-            self.conn.execute("PRAGMA synchronous=NORMAL")
-            self.conn.execute("PRAGMA foreign_keys=ON")
-            return self.conn
-        except Error as e:
-            logger.error(f"Error connecting to database: {e}")
-            raise
+        return self.conn
 
     def create_schema(self) -> None:
-        """
-        Creates the database schema from the provided SQL file.
-        """
+        """Creates the database schema from the provided SQL file."""
         try:
-            logger.info("Creating database schema...")
-            self.conn.executescript(Path(DB_SCHEMA_PATH).read_text())
-            self.conn.commit()
-            logger.info("Schema created successfully.")
+            with self._lock:
+                logger.info("Creating database schema...")
+                self.conn.executescript(Path(DB_SCHEMA_PATH).read_text())
+                self.conn.commit()
+                logger.info("Schema created successfully.")
         except Error as e:
             logger.error(f"Error creating schema: {e}")
             raise
 
     def create_views(self) -> None:
-        """
-        Creates database views from the provided SQL file.
-        """
+        """Creates database views from the provided SQL file."""
         try:
-            logger.info("Creating database views...")
-            self.conn.executescript(Path(DB_VIEWS_PATH).read_text())
-            self.conn.commit()
-            logger.info("Views created successfully.")
+            with self._lock:
+                logger.info("Creating database views...")
+                self.conn.executescript(Path(DB_VIEWS_PATH).read_text())
+                self.conn.commit()
+                logger.info("Views created successfully.")
         except Error as e:
             logger.error(f"Error creating views: {e}")
             raise
@@ -111,11 +120,12 @@ class SqliteManager:
             table_names (list): List of table names to delete.
         """
         try:
-            for table in table_names:
-                logger.info(f"Deleting table: {table}...")
-                self.conn.execute(f"DROP TABLE IF EXISTS {table};")
-            self.conn.commit()
-            logger.info("Tables deleted successfully.")
+            with self._lock:
+                for table in table_names:
+                    logger.info(f"Deleting table: {table}...")
+                    self.conn.execute(f"DROP TABLE IF EXISTS {table};")
+                self.conn.commit()
+                logger.info("Tables deleted successfully.")
         except Error as e:
             logger.error(f"Error deleting tables: {e}")
             raise
@@ -148,62 +158,76 @@ class SqliteManager:
             raise
 
     def load_data_from_csv(self, batch_size: int = 5000) -> None:
+        """Loads data from CSV into the database."""
         try:
-            logger.info(f"Initial load from CSV: {PATH_OPERATIONS_ANALYST_DATA}")
+            with self._lock:
+                logger.info(f"Initial load from CSV: {PATH_OPERATIONS_ANALYST_DATA}")
 
-            df: DataFrame = read_csv(PATH_OPERATIONS_ANALYST_DATA)
-            logger.info(f"DataFrame loaded: {len(df)} rows")
-            logger.info(f"Dtypes:\n{df.dtypes}")
+                df: DataFrame = read_csv(PATH_OPERATIONS_ANALYST_DATA)
+                logger.info(f"DataFrame loaded: {len(df)} rows")
+                logger.info(f"Dtypes:\n{df.dtypes}")
 
-            missing_cols: set = set(EXPECTED_COLUMNS) - set(df.columns)
-            if missing_cols:
-                raise ValueError(f"Missing columns in CSV: {missing_cols}")
+                missing_cols: set = set(EXPECTED_COLUMNS) - set(df.columns)
+                if missing_cols:
+                    raise ValueError(f"Missing columns in CSV: {missing_cols}")
 
-            df_clean: DataFrame = df[EXPECTED_COLUMNS].copy()
-            df_clean["day"] = to_datetime(df_clean["day"]).dt.strftime("%Y-%m-%d")
+                df_clean: DataFrame = df[EXPECTED_COLUMNS].copy()
+                df_clean["day"] = to_datetime(df_clean["day"]).dt.strftime("%Y-%m-%d")
 
-            total_rows: int = len(df_clean)
-            num_batches: int = (total_rows + batch_size - 1) // batch_size
+                total_rows: int = len(df_clean)
+                num_batches: int = (total_rows + batch_size - 1) // batch_size
 
-            logger.info(f"Inserting {total_rows} rows in {num_batches} batches...")
-            self.__batch_insert(df_clean, total_rows, batch_size)
-            self.conn.commit()
+                logger.info(f"Inserting {total_rows} rows in {num_batches} batches...")
+                self.__batch_insert(df_clean, total_rows, batch_size)
+                self.conn.commit()
 
-            logger.info(f"✓ Load complete! {total_rows} rows inserted.")
+                logger.info(f"✓ Load complete! {total_rows} rows inserted.")
         except Exception as e:
             logger.error(f"Error loading data from CSV: {e}", exc_info=True)
             raise
 
     def optimize_database(self) -> None:
-        """
-        Optimizes the SQLite database using ANALYZE and VACUUM.
-        """
-        logger.info("Optimizing database...")
-
-        self.conn.execute("ANALYZE")
-        self.conn.execute("VACUUM")
-
-        logger.info("✓ Optimization complete!")
+        """Optimizes the SQLite database using ANALYZE and VACUUM."""
+        try:
+            with self._lock:
+                logger.info("Optimizing database...")
+                self.conn.execute("ANALYZE")
+                self.conn.execute("VACUUM")
+                logger.info("✓ Optimization complete!")
+        except Error as e:
+            logger.error(f"Error optimizing database: {e}")
+            raise
 
     def select_query(self, query: str) -> DataFrame:
         """
         Executes a SELECT query and returns the result as a DataFrame.
+        Thread-safe execution using thread-local connection.
         Args:
             query (str): The SELECT SQL query to execute.
         Returns:
             DataFrame: Resulting DataFrame from the query.
         """
-        df: DataFrame = read_sql_query(query, self.conn)
-        return df
+        try:
+            df: DataFrame = read_sql_query(query, self.conn)
+            return df
+        except Error as e:
+            logger.error(f"Error executing query: {e}")
+            raise
 
     def close(self) -> None:
-        """
-        Closes the database connection.
-        """
+        """Closes the thread-local database connection."""
         try:
-            if self.conn:
-                self.conn.close()
-                logger.info("Connection closed.")
+            if hasattr(self._local, 'connection') and self._local.connection:
+                self._local.connection.close()
+                self._local.connection = None
+                logger.info(f"Connection closed for thread {threading.current_thread().name}")
         except Error as e:
             logger.error(f"Error closing connection: {e}")
             raise
+
+    def close_all(self) -> None:
+        """
+        Closes all thread-local connections.
+        Use this only when shutting down the application.
+        """
+        self.close()

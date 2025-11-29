@@ -1,0 +1,26 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "insights",
+            "description": "Generates insights based on the provided SQL query and data visualization parameters.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "insights_request": {
+                        "type": "string",
+                        "description": "A detailed request for insights based on the SQL query and its results."
+                    },
+                    "conclusion": {
+                        "type": "string",
+                        "description": "A summary conclusion derived from the insights."
+                    }
+                },
+                "required": [
+                    "insights_request",
+                    "conclusion"
+                ]
+            }
+        }
+    }
+]
