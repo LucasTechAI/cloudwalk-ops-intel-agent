@@ -1,0 +1,62 @@
+[
+    {
+        "type":"function",
+        "function":{
+            "name":"run_sql",
+            "description":"Executa uma consulta SQL no banco...",
+            "parameters":{
+                "type":"object",
+                "properties":{
+                    "querySQL":{
+                        "type":"string",
+                        "description":"Consulta SQLite completa..."
+                    },
+                    "plotSuggestion":{
+                        "type":"string",
+                        "enum":[
+                            "bar",
+                            "barh",
+                            "line",
+                            "boxplot",
+                            "hist",
+                            "scatter",
+                            "table",
+                            "number"
+                        ],
+                        "description":"Tipo de visualização recomendada"
+                    },
+                    "title":{
+                        "type":"string",
+                        "description":"Título do gráfico (se aplicável)"
+                    },
+                    "x-axis":{
+                        "type":"string",
+                        "description":"Coluna para o eixo X (se aplicável)"
+                    },
+                    "y-axis":{
+                        "type":"string",
+                        "description":"Coluna para o eixo Y (se aplicável)"
+                    },
+                    "explanation":{
+                        "type":"string",
+                        "description":"Explicação do que a query faz"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": ["success", "warning", "error", "missing_column"],
+                        "description": "Status da geração da query: success (ok), warning (atenção), error (falha), missing_column (coluna inexistente)"
+                    }
+                },
+                "required":[
+                    "querySQL",
+                    "plotSuggestion",
+                    "explanation",
+                    "title",
+                    "x-axis",
+                    "y-axis",
+                    "status"
+                ]
+            }
+        }
+    }
+]
