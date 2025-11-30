@@ -365,19 +365,19 @@ streamlit run src/dashboard/app.py --server.runOnSave true
 
 ## 🚀 Roadmap
 
-### Phase 1: Enhanced Intelligence (Q2 2025)
+### Phase 1: Enhanced Intelligence
 - Vector database for semantic search
 - Multi-LLM support (Claude, GPT-4, Gemini)
 - Advanced anomaly detection (Isolation Forest)
 - Predictive analytics module
 
-### Phase 2: Enterprise Features (Q3 2025)
+### Phase 2: Enterprise Features
 - Real-time data streaming via webhooks
 - Role-based access control (RBAC)
 - Audit logs and compliance reporting
 - CloudWalk API integration
 
-### Phase 3: Scale & Internationalization (Q4 2025)
+### Phase 3: Scale & Internationalization
 - Multi-language support (Portuguese, Spanish)
 - PostgreSQL migration for concurrency
 - Distributed tracing and monitoring
