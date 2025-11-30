@@ -69,6 +69,8 @@ def generate_insights_with_ai(
             f"SQL Query: {response.get('querySQL', '')}\n\n"
             f"Data:\n{data_df.to_json(orient='records')}\n\n"
             "Provide insights in a clear and structured manner."
+            " YOU MUST return a JSON with the following fields: "
+            "insightsRequest, conclusion, nextSteps"
         )
 
         insights_response = agent.invoke_with_tools(

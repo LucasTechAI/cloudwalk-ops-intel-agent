@@ -15,6 +15,10 @@ def render_header(days_filter: int) -> tuple:
     with col_header1:
         title("📊 CloudWalk Operations Intelligence")
         markdown("*Real-time Analytics Dashboard • Q1 2025*")
+        markdown(
+            '<small>📁 Data: <a href="https://github.com/Crives-cw/BI/blob/main/Operations_analyst_data.csv" target="_blank">CloudWalk Operational DB</a></small>',
+            unsafe_allow_html=True
+        )
 
     with col_header2:
         markdown("###  ")
