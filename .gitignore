@@ -1,0 +1,41 @@
+# Ambientes virtuais Python
+venv/
+env/
+ENV/
+.venv
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Bancos de dados locais
+*.db
+*.db-shm
+*.db-wal
+data/databases/*.db*
+
+# Dependências e build
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebooks (checkpoints)
+.ipynb_checkpoints/
+
+# Variáveis de ambiente
+.env
+.env.local

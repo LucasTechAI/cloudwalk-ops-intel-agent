@@ -39,6 +39,8 @@
         - Clear explanations of trends, anomalies, or patterns observed
     2. CONCLUSION:
         - A concise summary conclusion derived from the insights
+    3. NEXT STEPS:
+        - Recommended next steps or actions based on the insights and conclusion
 </response_format>
 
 <quick_guide>

@@ -7,18 +7,23 @@
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "insights_request": {
+                    "insightsRequest": {
                         "type": "string",
                         "description": "A detailed request for insights based on the SQL query and its results."
                     },
                     "conclusion": {
                         "type": "string",
                         "description": "A summary conclusion derived from the insights."
+                    },
+                    "nextSteps": {
+                        "type": "string",
+                        "description": "Recommended next steps or actions based on the insights and conclusion."
                     }
                 },
                 "required": [
-                    "insights_request",
-                    "conclusion"
+                    "insightsRequest",
+                    "conclusion",
+                    "nextSteps"
                 ]
             }
         }
