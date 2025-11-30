@@ -34,7 +34,7 @@ EXPECTED_COLUMNS = [
 
 class SqliteManager:
     """Thread-safe SQLite Manager for Streamlit applications"""
-    
+
     def __init__(self, db_path: str = None) -> None:
         """
         Constructs a SqliteManager object with thread-local storage.
@@ -51,7 +51,7 @@ class SqliteManager:
         Returns a thread-local database connection.
         Creates a new connection if one doesn't exist for the current thread.
         """
-        if not hasattr(self._local, 'connection') or self._local.connection is None:
+        if not hasattr(self._local, "connection") or self._local.connection is None:
             self._local.connection = self._create_connection()
         return self._local.connection
 
@@ -66,7 +66,9 @@ class SqliteManager:
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA synchronous=NORMAL")
             conn.execute("PRAGMA foreign_keys=ON")
-            logger.info(f"New connection created for thread {threading.current_thread().name}")
+            logger.info(
+                f"New connection created for thread {threading.current_thread().name}"
+            )
             return conn
         except Error as e:
             logger.error(f"Error creating connection: {e}")
@@ -217,10 +219,12 @@ class SqliteManager:
     def close(self) -> None:
         """Closes the thread-local database connection."""
         try:
-            if hasattr(self._local, 'connection') and self._local.connection:
+            if hasattr(self._local, "connection") and self._local.connection:
                 self._local.connection.close()
                 self._local.connection = None
-                logger.info(f"Connection closed for thread {threading.current_thread().name}")
+                logger.info(
+                    f"Connection closed for thread {threading.current_thread().name}"
+                )
         except Error as e:
             logger.error(f"Error closing connection: {e}")
             raise
