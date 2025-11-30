@@ -66,26 +66,37 @@ def render_sidebar() -> int:
         with expander("ℹ️ **About**"):
             markdown(
                 """
-            **CloudWalk Operations Intelligence**
-            
-            📊 Real-time analytics platform for transaction monitoring and business intelligence.
-            
-            **Features:**
-            - Live KPI tracking
-            - Trend analysis
-            - AI-powered insights
-            - Custom queries
-            
-            **Tech Stack:**  
-            🎨 Streamlit • 📈 Plotly  
-            🐼 Pandas • 🗄️ SQLite
-            
-            ---
-            
-            **Data Period:** Q1 2025  
-            **Version:** 2.0.0  
-            **Created by:** Lucas Mendes Barbosa
-            """
+                **CloudWalk Operations Intelligence**
+                
+                📊 Real-time analytics platform for transaction monitoring and business intelligence.
+                
+                **✨ Features:**
+                - Live KPI tracking
+                - Trend analysis & forecasting
+                - AI-powered insights
+                - Natural language queries
+                
+                **🛠️ Tech Stack:**
+                ```
+                Frontend    → Streamlit 1.28+
+                Charts      → Plotly
+                Data        → Pandas
+                Database    → SQLite
+                AI Engine   → LangChain + Llama 3.1
+                ```
+                
+                ---
+                
+                **📅 Data Coverage:** Q1 2025 (Jan-Mar)  
+                **📊 Dataset:** 292M+ transactions • R$ 38.8B TPV  
+                **🔢 Version:** 2.0.0  
+                
+                ---
+                
+                **👨‍💻Developer:** Lucas Mendes Barbosa  
+                **💻Repository:** [github.com/LucasTechAI](https://github.com/LucasTechAI/cloudwalk-ops-intel-agent)  
+                **📧Contact:** [lucas.mendestech@gmail.com](mailto:lucas.mendestech@gmail.com)
+                """
             )
 
         markdown("---")

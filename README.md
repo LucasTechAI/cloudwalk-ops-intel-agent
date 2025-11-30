@@ -1,7 +1,5 @@
 # 🤖 CloudWalk Operations Intelligence Agent
 
-
-
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Ollama](https://img.shields.io/badge/Ollama-Llama%203.1-green.svg)](https://ollama.ai/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
@@ -9,9 +7,15 @@
 
 **AI-powered analytics agent that transforms natural language into actionable business insights**
 
-[Demo](#-demo) • [Quick Start](#-quick-start) • [Features](#-key-features) • [Architecture](#-architecture) • [Documentation](#-documentation)
+---
 
+## 🎥 Demo
 
+[![Watch Demo - CloudWalk Operations Intelligence](https://img.youtube.com/vi/3SUuqWdfKx0/maxresdefault.jpg)](https://www.youtube.com/watch?v=3SUuqWdfKx0)
+
+**▶️ [Watch Full Demo on YouTube](https://www.youtube.com/watch?v=3SUuqWdfKx0)** • *Natural language queries, AI insights, and automated analytics*
+
+---
 
 ## 📋 Overview
 
@@ -25,15 +29,7 @@ CloudWalk Operations Intelligence Agent is a conversational analytics platform t
 - **🚨 Proactive Alerts**: Automated anomaly detection with daily monitoring
 - **⚡ Lightning Fast**: Optimized database views for sub-second query responses
 
-
-## 🎥 Demo
-
-
-
-[![Watch the demo](https://img.youtube.com/vi/your_video_id/maxresdefault.jpg)](https://youtu.be/your_video_id)
-
-*Full demonstration: Natural language queries, AI insights, and automated alerts*
-
+---
 
 ## 🚀 Quick Start
 
@@ -102,6 +98,7 @@ streamlit run src/dashboard/app.py
 
 Access the dashboard at **http://localhost:8501**
 
+---
 
 ## ✨ Key Features
 
@@ -133,20 +130,17 @@ The agent automatically selects the optimal chart type:
 
 ### 🔔 Automated Monitoring
 
-- **Daily Health Checks**: Scheduled anomaly detection at 8 AM
 - **KPI Alerts**: Threshold-based notifications for critical metrics
 - **Custom Thresholds**: Configurable sensitivity per business context
 - **Trend Detection**: Statistical analysis of week-over-week changes
 
+---
 
 ## 🏗️ Architecture
 
-
-[![Architecture Diagram](docs/architecture_diagram.png)](docs/architecture_diagram.png)
+![Architecture Diagram](docs/architecture.png)
 
 *Click to enlarge - Complete system architecture with data flow*
-
-
 
 ### 🔧 Technology Stack
 
@@ -158,7 +152,6 @@ The agent automatically selects the optimal chart type:
 | **Backend** | Python 3.10+ | Core business logic |
 | **Frontend** | Streamlit | Interactive dashboard |
 | **Visualization** | Plotly | Dynamic charts |
-| **Scheduling** | APScheduler | Automated alerts |
 
 ### 📊 Data Model
 
@@ -209,6 +202,7 @@ GROUP BY product, entity
 ORDER BY tpv DESC;
 ```
 
+---
 
 ## 💬 Query Examples
 
@@ -236,6 +230,7 @@ ORDER BY tpv DESC;
 "Which day of the week has the highest average ticket?"
 ```
 
+---
 
 ## 🤖 AI-Generated Insights
 
@@ -260,6 +255,7 @@ processing R$ 316K daily across 15,000+ merchants.
 3. Investigate individual customer acquisition strategies
 ```
 
+---
 
 ## 📁 Project Structure
 
@@ -314,6 +310,7 @@ cloudwalk-ops-intel-agent/
 └── README.md                   # This file
 ```
 
+---
 
 ## 🧪 Testing & Development
 
@@ -340,6 +337,7 @@ export LOG_LEVEL=DEBUG
 streamlit run src/dashboard/app.py --server.runOnSave true
 ```
 
+---
 
 ## 🎯 Design Decisions
 
@@ -351,6 +349,7 @@ streamlit run src/dashboard/app.py --server.runOnSave true
 | **LangChain Framework** | Production-ready orchestration, tool ecosystem | Learning curve, abstraction overhead |
 | **Llama 3.1 (8B)** | Strong SQL generation, multilingual support | Slower than cloud APIs, requires 8GB+ RAM |
 
+---
 
 ## ⚠️ Known Limitations
 
@@ -362,6 +361,7 @@ streamlit run src/dashboard/app.py --server.runOnSave true
 | **Manual Threshold Tuning** | Requires business context | Provide configuration UI in dashboard |
 | **English-Only Interface** | Limited accessibility | Future: Multi-language support (PT, ES, EN) |
 
+---
 
 ## 🚀 Roadmap
 
@@ -383,6 +383,7 @@ streamlit run src/dashboard/app.py --server.runOnSave true
 - Distributed tracing and monitoring
 - Mobile-responsive dashboard
 
+---
 
 ## 👤 Author
 
@@ -395,7 +396,8 @@ Data Scientist | AI Engineer | Tech Enthusiast
 
 *Developed as part of the CloudWalk Operations Intelligence Analyst Challenge - 2025*
 
+---
+
 ## 📄 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
